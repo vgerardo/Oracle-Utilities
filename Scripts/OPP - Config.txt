@@ -1,0 +1,79 @@
+
+=============================================
+PROFILES
+=============================================
+*Concurrent:OPP Process Timeout				= 4000    Segundos
+Concurrent:OPP Response Timeout				= 16000
+
+Concurrent:OPS Request Partitioning			= OFF
+Concurrent:Save Output					= null
+
+Viewer: Application for Text				= 
+Viewer: Text						= Browser
+
+=============================================
+PARAMETROS DEL CONCURRENTE
+=============================================
+Parameter 	P_SCALABLE_FLAG
+Description 	Enable Scalable Flag
+Enabled 	Check
+Value Set	Yes/No
+Default Type 	Constant
+Default Value 	Yes
+Prompt 		P_SCALABLE_FLAG
+Token 		ScalableFlag (Case sensitive. Give this exact value)
+
+Parameter	P_DEBUG_FLAG
+Description 	Enable DebugFlag
+Enabled 	Check
+Value Set	Yes/No
+Default Type 	Constant
+Default Value 	Y
+Prompt 		P_DEBUG_FLAG 
+Token 		DebugFlag (Case sensitive. Give this exact value)
+
+=============================================
+XML ADMINISTRADOR
+=============================================
+Administration -> Configuration -> FO Processing
+	Enable scalable feature of XSLT processor		= False
+
+
+=============================================
+CONCURRENTE: XML Report Publisher
+=============================================
+1. Responsibility: System Administrator
+2. Function: Concurrent --> Program --> Define
+3. Query the XML Report Publisher program
+4. Click on Parameters
+5. Select the Debug Flag parameter
+6. Change the Default Value from N to Y
+7. Rerun the XML Report Publisher program to capture the complete error
+
+=============================================
+Concurrent Manager - OPP
+=============================================
+How do I get the OPP (Output Post Processor) log file?
+a. System Administrator > Concurrent > Manager > Administer
+b. Search for 'Output Post Processor'
+c. Click the 'Processes' button
+d. Click the Manager Log button. This will open the 'OPP'
+e. Upload the OPP log file.
+
+=============================================
+QUERY PARA OBTENER EL LOG DEL OPP
+=============================================
+SELECT fcpp.concurrent_request_id req_id
+      , fcp.node_name
+      , fcp.logfile_name
+FROM fnd_conc_pp_actions fcpp, fnd_concurrent_processes fcp
+WHERE fcpp.processor_id = fcp.concurrent_process_id
+AND fcpp.action_type = 6
+AND fcpp.concurrent_request_id = 157950682
+;
+
+How do I get the XML file from the server?
+You must work with your DBA to get the XML file from the server.
+
+You can get the output file from following location:
+$APPLCSF/$APPLOUT/o<request_id>.out where <request_id> has to be replaced by the report concurrent program request_id.

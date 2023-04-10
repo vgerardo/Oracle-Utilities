@@ -1,0 +1,74 @@
+
+URL'S UTILES
+======================
+DocID 2385340.1 Define a Dependent List of Values in Oracle Web Application Desktop Integrator
+
+
+CREATE CUSTOM ORACLE WEBADI EBS R12
+================================
+1. Crear el Paquete Controlador
+2. Ingresar a responsabilidad "Desktop Integration Manager"
+3. "Create Integrator"
+	Integrator Name = 'nombre del paquete'
+	Internal Name = 'nombre maximo 22 chars'
+	Application = PPG Comex Custom
+	Display in Create Document Page = 'Check'
+	Security Rules, Agregar:
+		BNE_ADI_CREATE_DOCUMENT
+		BNE_CREATE_DOCUMENT
+		XXCMX_WSH_UP_ITEMS_OPL
+
+	(Next)
+
+	Interface Name = 'Nombre Corto maximo 22 chars'
+	Interface Type = 'API - Procedure'
+	Package Name = 'nombre del paquete'
+	Procedure/Function Name = 'nombre del proc o función'
+	API Returns = aun me falta averiguar cuando se usa
+
+	(Apply)
+
+	(*) Select the interface Name
+	(Submit)
+	Must apper a "Confirmation" created sucessfully message
+
+4. "Define Layout"
+	Serch for integrator previously created
+	(*) Select it
+	click "Define Layout" button
+	Select the integrator
+	click "Create" button
+	Layout Name = 'Nombre de Layout'
+	Choose type of "Placement" for each Field Name (ej. Line)
+	(Next)
+	(Apply)
+	Must apper "Layout saved successfully"
+
+
+
+. click "Create Document"
+
+CREATE A FUNCTION
+=========================
+Web ADI Create Document Function
+Create form fuction:
+	Type = SSWA servlet function
+	Form = (dejar vacio)
+	Parameters = bne:page=BneCreateDoc&bne:integrator=50301:XXCMX_WSH_CCP_CMX_DET&Bne:layout=50301:XXCMX_WSH_CCP_CMX_DET
+	HTML Call = BneApplicationService
+	
+
+RECOMENDACIONES
+==================
+1. Setear la url de Oracle como "Trusted Site" en el Brower IE
+   Tools > Internet Optios > Security > Trusted sites button
+
+2. File > Options > Trust Center > Trust Center Settings "button"
+   > Macro Settings > check "Disable VBA macros with notification"
+
+3. Set profile option "BNE Allow No Security Rule" to "Yes"
+
+
+PARA VER ERRORES DE WEBADI
+=============================
+http://cmxoebsdev.grupocomex.com.mx:8007/OA_HTML/BneAdminServlet?bne:action=log-last&bne:lines=50
