@@ -1,0 +1,4 @@
+COPY FROM intracat/conect#16@intranet_posadas TO bolinf/welcome12@pgpdai REPLACE aicat_usuario USING   SELECT (id_empresa) id_empresa, (id_usuario) id_usuario, DECODE(id_usuario, 'ANGELICA.VILLALOBOS', '0', 'ARGONZALEZ','0', 'ILEANA.IDUETA','0', 'CLAMORALES', '0', 'BRENICE.EPAREDES','0', 'JORGE.MCGREGOR','0', 'PLARA','0', 'VENTAS8FAVZ','0', 'LBUENROSTRO', '0', 'CXPFIINS', '0', 'MANTOFARF1', '0', 'AGTORRES', '0', 'AHONORATO', '0', 'JVALENCIA', '0', 'MILDRED.GARCIA', '0', 'MIGUEL.CATANO', '0', 'ESEQUIEL.AVARADO', '0', id_colaborador) id_colaborador, MAX (id_idioma) id_idioma, MAX (id_perfil) id_perfil, MAX (tipo_usuario_curso) tipo_usuario_curso, MAX (id_empresa_navegacion) id_empresa_navegacion, MAX (id_grupo_lo) id_grupo_lo, MAX (id_region) id_region FROM AICAT_USUARIO GROUP BY id_empresa, id_usuario, id_colaborador
+/
+exit
+/
