@@ -13,7 +13,7 @@ v_datos     xmltype := xmltype ('<EMPLEADOS>
                               </EMPLEADOS>');
 
 
-doc       xmldom.DOMDocument;
+doc       xmldom.DOMDocument; 
 v_parent  xmldom.DOMNode;
 v_nodo    xmldom.DOMNode;
 v_list    xmldom.DOMNodeList;
