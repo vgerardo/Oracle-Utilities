@@ -1,0 +1,87 @@
+#!/bin/sh
+# $ID: CSA_LS_DIR, v1.0 2015/03/14 15:59:00 eer EXP $
+#
+
+echo `date +"%H:%M:%S"` " Inicia script"
+pi=$1
+
+#
+# Parametros Internos, IS broken down TO pieces
+#
+pi_program_name=$(echo "$pi" | awk -F' ' '{print $1}')
+#pi_program_name=$(echo "$pi" | cut -f1 -d' ')
+pi_req_id=$(echo "$pi" | cut -f2 -d' '|cut -f2 -d'=')
+pi_login_id=$(echo "$pi" | cut -f3 -d' '|cut -f2 -d'='|cut -f2 -d'"')
+pi_user_id=$(echo "$pi" | cut -f4 -d' ' | cut -f2 -d'=')
+pi_user_name=`echo "$pi" | cut -f5 -d' ' | cut -f2 -d'='| cut -f2 -d'"'`
+pi_printer=`echo "$pi" | cut -f6 -d' ' | cut -f2 -d'='| cut -f2 -d'"'`
+pi_save_output=`echo "$pi" | cut -f7 -d' ' | cut -f2 -d'='`
+pi_no_copies=`echo "$pi" | cut -f8 -d' ' | cut -f2 -d'='`
+#
+# parametros de Usuario
+#
+p_comodin=$(echo "$pi" | cut -f8 -d'"')
+p_directorio=$(echo "$pi" | cut -f10 -d'"')
+#
+
+echo `date +"%H:%M:%S"` " Separacion de Parametros"
+#
+echo "p_comodin:      $p_comodin"
+echo "p_directorio:   $p_directorio"
+
+cd "$XBOL_TOP/sql"
+
+#
+# command sustitution has two forms: using backticks `command` or $(command)
+#
+echo "Dir  Actual:   " $(pwd)
+ 
+echo "Comando:        ls $p_directorio | grep -i -E \"$p_comodin\""
+
+echo `date +"%H:%M:%S"` " Ejecuta cmd LS para obtener listado"
+
+#
+# LS lee el contenido del directorio especificado, 
+# GREP recibe el resultado de LS y filtra los datos de acuerdo al p_comodin
+# SED recibe los datos filtrados y le agrega el prefijo pi_req_id a cada linea
+#
+ls "$p_directorio" | grep -i -E "$p_comodin" > grp_ls_"$pi_req_id".ctl 
+RC=$?
+
+if [ "$RC" -ne 0 ]; then 
+
+  echo "No se encontraron archivos con el criterio proporcionado: $p_comodin"
+
+else
+
+  echo "LOAD DATA "                                      > grp_sed_"$pi_req_id".ctl
+  echo "INFILE *"                                       >> grp_sed_"$pi_req_id".ctl
+  echo "APPEND INTO TABLE bolinf.GRP_LS_DIR_T"          >> grp_sed_"$pi_req_id".ctl
+  echo "FIELDS TERMINATED BY '|'"                       >> grp_sed_"$pi_req_id".ctl
+  echo "(request_id, file_name, creation_date sysdate)" >> grp_sed_"$pi_req_id".ctl
+  echo "BEGINDATA"                                      >> grp_sed_"$pi_req_id".ctl
+
+  echo `date +"%H:%M:%S"` " Ejecutando cmd SED, para agregar el Request_ID"
+  
+  sed -e "1,$ s/\(.*\)/$pi_req_id|\1/" grp_ls_"$pi_req_id".ctl >> grp_sed_"$pi_req_id".ctl
+
+  echo `date +"%H:%M:%S"` " Ejecutando SQLLDR para cargar archivo de control"
+
+  sqlldr "$pi_login_id" control=grp_sed_"$pi_req_id".ctl silent=HEADER 
+  RC=$?
+
+  case "$RC" in
+   0) echo "Los datos se guardaron en: SELECT * FROM bolinf.GRP_LS_DIR_T WHERE request_id=$pi_req_id"  ;;
+   1) echo "SQL*Loader execution exited with failure, see logfile" ;;
+   2) echo "SQL*Loader execution exited with warning, see logfile" ;;
+   3) echo "SQL*Loader execution encountered a fatal error" ;;
+   *) echo "unknown return code $RC" ;;
+  esac
+
+fi
+
+rm grp_ls_"$pi_req_id".*
+rm grp_sed_"$pi_req_id".*
+
+echo "Fin de Listado de Archivos" 
+

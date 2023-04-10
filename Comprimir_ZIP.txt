@@ -1,0 +1,76 @@
+
+http://www.oracle.com/technology/tech/java/jsp/files/os_command.zip
+
+
+            v_src_file := bfilename('GRP_OUTGOING', v_nombre_archivo);
+            dbms_lob.fileopen(v_src_file, dbms_lob.file_readonly);
+            v_content  := utl_compress.lz_compress(v_src_file, 9);
+            v_blob_len := dbms_lob.getlength(v_content);
+            v_file_conv     := utl_file.fopen('GRP_OUTGOING', replace(v_nombre_archivo,'.txt','.zip'),'wb');
+            while v_pos < v_blob_len loop
+                dbms_lob.read(v_content, v_amount, v_pos, v_buffer);
+                utl_file.put_raw(v_file_conv, v_buffer, true);
+                v_pos := v_pos + v_amount;
+            end loop;
+            utl_file.fclose(v_file_conv);
+
+
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+	USANDO JAVA
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+CREATE OR REPLACE AND RESOLVE JAVA SOURCE NAMED "HOST" AS
+ import java.lang.*;
+ import java.io.*;
+
+ public class Host
+ {
+ /*public static void executeCommand (String command , String etype) throws IOException*/
+ public static void executeCommand (String command) throws IOException
+ {                  
+ String[] wFullCommand = {"C:\\winnt\\system32\\cmd.exe", "/y", "/c", command};
+ String[] uFullCommand = {"/bin/sh", "-c", command};
+
+/* 
+ if (etype.toUpperCase().equals("W"))
+    Runtime.getRuntime().exec(wFullCommand);
+ 
+ else if(etype.toUpperCase().equals("U+"))
+    Runtime.getRuntime().exec(uFullCommand);
+ 
+ else if(etype.toUpperCase().equals("U"))
+*/
+    Runtime.getRuntime().exec(command);
+ }
+ };
+ /
+
+ CREATE OR REPLACE PROCEDURE Host_Command (p_command IN VARCHAR2 /*, p_etype IN VARCHAR2*/)
+ AS LANGUAGE JAVA 
+ --NAME 'Host.executeCommand (java.lang.String, java.lang.String)';
+ NAME 'Host.executeCommand (java.lang.String)';
+ /
+
+
+BEGIN
+  DBMS_JAVA.grant_permission ('APPS', 'java.io.FilePermission',
+                             '<>', 'read ,write, execute, delete');
+
+  DBMS_JAVA.grant_permission ('APPS', 'SYS:java.lang.RuntimePermission',
+                             'writeFileDescriptor', '');
+ 
+  DBMS_JAVA.grant_permission ('APPS', 'SYS:java.lang.RuntimePermission',
+                             'readFileDescriptor', '');
+END;
+/
+
+SET SERVEROUTPUT ON SIZE 1000000
+
+CALL DBMS_JAVA.SET_OUTPUT(1000000);
+
+BEGIN
+  host_command (p_command => 'ls *.txt');
+  
+END;
+/

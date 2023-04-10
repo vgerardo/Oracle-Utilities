@@ -1,0 +1,105 @@
+--
+-- Cambiar clave de user de DB
+--
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'acapulco';
+
+
+-- Para poder ver tablas como RA_INTERFACE_LINES
+execute     mo_global.SET_POLICY_CONTEXT('S',89); -- single operating unit
+
+
+
+begin
+DBMS_APPLICATION_INFO.set_client_info('83');   -- algunas vistas lo necesitan para el ORG_ID
+end;
+
+exec dbms_application_info.set_client_info('83');
+
+
+alter session set nls_language = 'LATIN AMERICAN SPANISH';	-- ESA
+ALTER SESSION SET NLS_LANGUAGE= 'AMERICAN';			-- US
+execute immediate 'ALTER SESSION SET NLS_LANGUAGE=AMERICAN';
+
+fnd_global.apps_initialize
+ (user_id in number,
+resp_id in number,
+resp_appl_id in number);
+
+
+
+
+--
+--Para setear el "sessionid", y poder ver vistas 
+--
+begin
+    hr_session_utilities.insert_session_row(SYSDATE); 
+end;
+
+-- o también se puede insertar directamente la tabla
+--
+insert into fnd_sessions (session_id, effective_date)
+                  values (userenv('sessionid'), sysdate);
+
+
+
+TOMCAT
+==========
+0. sudo ./shutdown.sh
+1. ps -fea | grep java
+2. sudo kill -9 8480   (el #8480 se obtiene de la primera instruccion, hay que ver cual dice tomcat)
+3. sudo ./startup.sh
+
+*********************************************************
+
+
+
+keystoreFile="/opt/jdk/jdk1.6.0_26/bin/NEW2013.keystore" keystorePass="www.reps.posadas.com"/>
+
+
+
+			show databases
+
+			USE mysql
+      
+		        select host, user from user where user='reps_portal'
+      
+			INSERT INTO user (host,user,password) VALUES ('172.21.3.62','reps_portal',PASSWORD('cone$12#09') );
+			
+		        UPDATE user SET Password = PASSWORD('provprt010100') WHERE User = 'prov_portal';
+
+			GRANT SELECT,UPDATE,DELETE,INSERT ON REPS.* TO 'reps_portal'@'172.21.3.62';
+      
+			GRANT SELECT ON REPS.* TO 'reps_portal'@'localhost';
+			GRANT SELECT,UPDATE,DELETE,INSERT ON REPS.* TO 'reps_portal'@'%';
+			FLUSH PRIVILEGES;			
+
+			SELECT host, db, user, select_priv, insert_priv, delete_priv, update_priv FROM db;
+			SHOW GRANTS FOR reps_portal;
+
+NO	SQLPLUS		CONE_PGPD1I_NVO	auohsgpda59.oracleoutsourcing.com)(PORT=11010) 
+			CONE_DGPD1I_NVO vmohsgpda001.oracleoutsourcing.com)(PORT=11710)
+
+SQLSERVER 	TRACEROUTE -P 389 MoreliaDc01.morelia.corporativo.posadas.com.mx
+
+
+
+*********************************************************
+
+
+
+Convierte un numero a letra en INGLES!
+
+select to_char(to_date(155315,'J'), 'JSP') as converted_form from dual
+
+
+ select 
+     TO_DATE('ENE-11', 'MON-YY', 'NLS_DATE_LANGUAGE= SPANISH') ESPANIOL,
+     TO_CHAR(SYSDATE, 'DD-MON-YYYY','NLS_DATE_LANGUAGE= ENGLISH') Ingles     
+ from dual
+ 
+
+===============================
+Cambiar Password de BD usuario Oracle
+===============================
+			      <new pass>	 <old pass>
+alter user APPS identified by vhw6L5hadb replace orHuHyYk6o

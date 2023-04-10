@@ -1,0 +1,247 @@
+
+error:
+FRM-92095: Versión de Oracle JInitiator demasiado baja. Instale la versión 1.1.8.2 o superior
+solucion:
+Agregar a JAVA este parametro 
+	-Djava.vendor="Sun Microsystems Inc." 
+
+===============================
+Config OC4J para usar Java en lugar del JInitiator
+===============================
+Modifying the file formsweb.cfg.
+Lines:
+	baseHTMLjinitiator=basejini.htm 
+	to
+	baseHTMLjinitiator=basejpi.htm
+
+and
+	
+	jpi_mimetype=application/x-java-applet;jpi-version=1.4.2_06
+	to
+	jpi_mimetype=application/x-java-applet
+
+=============================
+PERFILES DE SISTEMA
+=============================
+
+Concurrent: Show Requests Summary After Each Request
+Concurrente: Mostrar Resumen de Solicitudes Después de Cada Ejecución de Solicitud
+
+Concurrente: Prioridad de Solicitudes
+
+Viewer: Text 		-> Browser
+Visualizador: Texto
+
+
+====================================
+Administrador Concurrentes XML
+====================================
+Output Post Processor Procesador Posterior de Output
+
+Regenerador de Plantilla de XML Publisher  -Xmx4096M
+XML Publisher Template Re-Generator
+
+
+====================================
+Converting Oracle rows to columns
+====================================
+Oracle 9i xmlagg
+http://www.dba-oracle.com/t_converting_rows_columns.htm
+<?split-column-header:TestScore?> <?splitcolumn-width:@width?> <?TestScoreRange?>
+<?splitcolumn-width:@width?>
+<?split-column-width-unit:6?>
+
+
+====================================
+PROFILES para UNIDADES OPERATIVAS
+====================================
+MO: Default Operating Unit
+MO: Operating Unit
+MO: Security Profile  -> BG_POSADAS
+
+
+====================================
+PROFILES PARA USAR "EXAMINAR"
+====================================
+• Utilities:Diagnostics = Yes/No     Utilitarios: Diagnósticos  
+• Hide Diagnostics = Yes/No 
+* Hide Diagnostics menu entry = No
+
+
+=======================================================================
+TABLA EXTERNA
+=======================================================================
+CREATE TABLE XXXX ( campos... )    
+    ORGANIZATION EXTERNAL
+    (
+        TYPE ORACLE_LOADER 
+        DEFAULT directory GRP_INCOMING 
+        ACCESS PARAMETERS (                        
+                        RECORDS DELIMITED BY NEWLINE  
+                        CHARACTERSET 'WE8MSWIN1252'       
+                        STRING SIZES ARE IN CHARACTERS
+                        LOAD WHEN (codigo != "CODIGO")
+                        FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+                        MISSING FIELD VALUES ARE NULL 
+                        REJECT ROWS WITH ALL NULL FIELDS
+                        ) 
+        LOCATION ('CAPEX_CARGA_MASIVA.csv')
+    )
+    REJECT LIMIT 1;
+
+
+=======================================================================
+HABILITAR DEBUG
+=======================================================================
+
+There are few profile options to enable and retrieve the debug messages. Here are those profile options.
+
+Profile Name			Suggested value		Comments
+FND: Debug Log Enabled		YES			This turns the debugging feature on
+FND: Debug Log Filename 	NULL			Use when you want debug messages to get stored to a file
+FND: Debug Log Level		STATEMENT		Following are options listed from least to most detailed debugging : Unexpected, Error, Exception, Event, Procedure, Statement
+FND: Debug Log Module		%			Indicate what modules to debug. You can use something like ‘ar%’ or even  ‘%arp_rounding%’ to limit modules debugged
+
+Sample setting to debug everything:
+
+	FND: Debug Log Enabled 	YES 
+	FND: Debug Log Filename NULL 
+	FND: Debug Log Level 	STATEMENT 
+	FND: Debug Log Module 	%
+
+
+
+=======================================================================
+SQLDEVELOPER - Para usar Monitor de Sesiones
+=======================================================================
+
+GRANT SELECT ON apps.gv$session TO bolinf;
+GRANT SELECT_CATALOG_ROLE TO BOLINF;
+GRANT EXECUTE_CATALOG_ROLE TO BOLINF;
+
+select * from USER_ROLE_PRIVS;
+
+
+FALTAN:
+
+GRANT SELECT ON gv$active_session_history TO bolinf;
+GRANT SELECT ON gv$sql_plan TO bolinf;
+GRANT SELECT ON V$MYSTAT to bolinf;
+GRANT SELECT ON sys.V_$SQLCOMMAND to <USER>
+GRANT SELECT ON sys.GV_$SESSION to <USER>
+
+OR obtain read catalog privilege:
+
+grant SELECT ANY DICTIONARY to BOLINF;
+
+
+
+=======================================================================
+WEBUTIL
+=======================================================================
+https://community.oracle.com/thread/1075270
+
+ORACLE_HOME   =/grp/ebsd/app/fs1/EBSapps/10.1.2
+FORMS_PATH    =/grp/ebsd/app/fs1/EBSapps/10.1.2/forms
+WEBUTIL_CONFIG=/grp/ebsd/app/fs1/EBSapps/10.1.2/forms/server/webutil.cfg
+
+/grp/ebsd/app/fs1/EBSapps/10.1.2/forms/webutil.pll
+
+
+How to get up and running with WebUtil 1.06 included with Oracle Developer Suite 10.1.2.0.2 on a win32 platform 
+Solution
+Assuming a fresh "Complete" install of Oracle Developer Suite 10.1.2.0.2,
+here are steps to get a small test form running, using WebUtil 1.06.
+
+Note: [OraHome] is used as an alias for your real oDS ORACLE_HOME.
+Feel free to copy this note to a text editor, and do a global find/replace on 
+[OraHome] with your actual value (no trailing slash). Then it is easy to 
+copy/paste actual commands to be executed from the note copy.
+
+
+1) Download http://prdownloads.sourceforge.net/jacob-project/jacob_18.zip 
+  and extract to a temporary staging area. Do not attempt to use 1.7 or 1.9.
+
+2) Copy or move jacob.jar and jacob.dll
+  [JacobStage] is the folder where you extracted Jacob, and will end in ...\jacob_18
+     cd [JacobStage]
+     copy jacob.jar [OraHome]\forms\java\.
+     copy jacob.dll [OraHome]\forms\webutil\.
+  The Jacob staging area is no longer needed, and may be deleted.
+
+3) Sign frmwebutil.jar and jacob.jar
+  Open a DOS command prompt.
+  Add [OraHome]\jdk\bin to the PATH:
+     set PATH=[OraHome]\jdk\bin;%PATH%
+  Sign the files, and check the output for success:
+     [OraHome]\forms\webutil\sign_webutil [OraHome]\forms\java\frmwebutil.jar
+     [OraHome]\forms\webutil\sign_webutil [OraHome]\forms\java\jacob.jar
+
+4) If you already have a schema in your RDBMS which contains the WebUtil stored code,
+  you may skip this step. Otherwise,
+  Create a schema to hold the WebUtil stored code, and privileges needed to
+  connect and create a stored package. Schema name "WEBUTIL" is recommended
+  for no reason other than consistency over the user base.
+  Open [OraHome]\forms\create_webutil_db.sql in a text editor, and delete or comment
+  out the EXIT statement, to be able to see whether the objects were created witout
+  errors.
+  Start SQL*Plus as SYSTEM, and issue:
+     CREATE USER webutil IDENTIFIED BY [password]
+     DEFAULT TABLESPACE users
+     TEMPORARY TABLESPACE temp;
+     /
+     GRANT CONNECT, CREATE PROCEDURE, CREATE PUBLIC SYNONYM TO webutil;
+     /
+
+
+     CONNECT webutil/[password]@[connectstring]
+     @[OraHome]\forms\create_webutil_db.sql
+     -- Inspect SQL*Plus output for errors, and then
+     CREATE PUBLIC SYNONYM webutil_db FOR webutil.webutil_db;
+     /
+
+  Reconnect as SYSTEM, and issue: 
+     grant execute on webutil_db to public;
+
+     /
+
+
+
+5) Modify [OraHome]\forms\server\default.env, and append [OraHome]\jdk\jre\lib\rt.jar 
+  to the CLASSPATH entry.
+
+6) Start the OC4J instance
+
+7) Start Forms Builder and connect to a schema in the RDBMS used in step (4).
+  Open webutil.pll, do a "Compile ALL" (shift-Control-K), and generate to PLX (Control-T).
+  It is important to generate the PLX, to avoid the FRM-40039 discussed in
+  Note 303682.1
+  If the PLX is not generated, the Webutil.pll library would have to be attached with
+  full path information to all forms wishing to use WebUtil. This is NOT recommended.
+
+8) Create a new FMB.
+  Open webutil.olb, and Subclass (not Copy) the Webutil object to the form.
+  There is no need to Subclass the WebutilConfig object.
+  Attach the Webutil.pll Library, and remove the path.
+  Add an ON-LOGON trigger with the code
+         NULL;
+  to avoid having to connect to an RDBMS (optional).
+  Create a new button on a new canvas, with the code
+         show_webutil_information (TRUE);
+  in a WHEN-BUTTON-PRESSED trigger.
+  Compile the FMB to FMX, after doing a Compile-All (Shift-Control-K).
+
+9) Under Edit->Preferences->Runtime in Forms Builder, click on "Reset to Default" if
+  the "Application Server URL" is empty.
+  Then append "?config=webutil" at the end, so you end up with a URL of the form
+      http://server:port/forms/frmservlet?config=webutil
+
+10) Run your form.
+
+
+=========================
+OAF para EBS
+=========================
+https://analisys.co/2017/07/21/oracle-oaf-adf-construir-app-jdev-r12/
+
+
