@@ -39,7 +39,7 @@ begin
 
     --Solo para visualizar el XML en el OUTPUT
     Dbms_Lob.createtemporary (v_clob, false);
-    xmldom.writeToClob (doc,v_clob);
+    xmldom.writeToClob (doc, v_clob);
     DBMS_OUTPUT.put_line ( v_clob );
 
     xmldom.freeDocument (doc);
