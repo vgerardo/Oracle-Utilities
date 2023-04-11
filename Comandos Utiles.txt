@@ -52,41 +52,6 @@ TOMCAT
 *********************************************************
 
 
-
-keystoreFile="/opt/jdk/jdk1.6.0_26/bin/NEW2013.keystore" keystorePass="www.reps.posadas.com"/>
-
-
-
-			show databases
-
-			USE mysql
-      
-		        select host, user from user where user='reps_portal'
-      
-			INSERT INTO user (host,user,password) VALUES ('172.21.3.62','reps_portal',PASSWORD('cone$12#09') );
-			
-		        UPDATE user SET Password = PASSWORD('provprt010100') WHERE User = 'prov_portal';
-
-			GRANT SELECT,UPDATE,DELETE,INSERT ON REPS.* TO 'reps_portal'@'172.21.3.62';
-      
-			GRANT SELECT ON REPS.* TO 'reps_portal'@'localhost';
-			GRANT SELECT,UPDATE,DELETE,INSERT ON REPS.* TO 'reps_portal'@'%';
-			FLUSH PRIVILEGES;			
-
-			SELECT host, db, user, select_priv, insert_priv, delete_priv, update_priv FROM db;
-			SHOW GRANTS FOR reps_portal;
-
-NO	SQLPLUS		CONE_PGPD1I_NVO	auohsgpda59.oracleoutsourcing.com)(PORT=11010) 
-			CONE_DGPD1I_NVO vmohsgpda001.oracleoutsourcing.com)(PORT=11710)
-
-SQLSERVER 	TRACEROUTE -P 389 MoreliaDc01.morelia.corporativo.posadas.com.mx
-
-
-
-*********************************************************
-
-
-
 Convierte un numero a letra en INGLES!
 
 select to_char(to_date(155315,'J'), 'JSP') as converted_form from dual
@@ -98,8 +63,3 @@ select to_char(to_date(155315,'J'), 'JSP') as converted_form from dual
  from dual
  
 
-===============================
-Cambiar Password de BD usuario Oracle
-===============================
-			      <new pass>	 <old pass>
-alter user APPS identified by vhw6L5hadb replace orHuHyYk6o
