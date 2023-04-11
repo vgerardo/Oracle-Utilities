@@ -98,8 +98,3 @@ select to_char(to_date(155315,'J'), 'JSP') as converted_form from dual
  from dual
  
 
-===============================
-Cambiar Password de BD usuario Oracle
-===============================
-			      <new pass>	 <old pass>
-alter user APPS identified by vhw6L5hadb replace orHuHyYk6o
