@@ -15,7 +15,7 @@ WHERE 1=1
   and cptl.language = USERENV ('LANG')
   and rtl.language = USERENV ('LANG')
   -- ---------------------------------------
-  and cptl.user_concurrent_program_name like 'XXCMX - WSH - Pick/Ship con WMS'
+  and cptl.user_concurrent_program_name like 'XXCMX - OE Confirmacion de RMA WMS a ORACLE'
 ;
 
 

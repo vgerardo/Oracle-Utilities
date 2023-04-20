@@ -1,15 +1,22 @@
 SET SERVEROUTPUT ON
-
-/*********************************************************
-*PURPOSE: To Add a Concurrent Program to a Request Group *
-*         from backend                                   *
-*AUTHOR: Shailender Thallam                              *
-**********************************************************/
 DECLARE
 
- v_concurrent_name     varchar2(100) 	:= 'CSA AP Anticipos Facturas y Ordenes';
- l_request_group       VARCHAR2 (200)	:= 'All Reports';
- l_group_application   VARCHAR2 (200)	:= 'SQLAP';
+TYPE type_req_groups IS VARRAY (100)   OF VARCHAR2(80);
+
+l_request_group       type_req_groups	:= type_req_groups (
+ 'XXCMX - INV Operador Interface'
+,'XXCMX - INV Op Interface CA PA'
+,'XXCMX - INV Op Interface CA BZ'
+,'XXCMX - INV Op Interface CA SV'
+,'XXCMX - INV Op Interface CA NI'
+,'XXCMX - INV Op Interface CA CR'
+,'XXCMX - INV Op Interface CA GT'
+,'XXCMX - INV Op Interface CA HN'
+); 
+
+ v_concurrent_name     varchar2(100) 	:= 'XXCMX WMS OE Confirma RMA (MS UP)';
+ 
+ l_group_application   VARCHAR2 (50);
  v_app_id              number(15)		:= 200;
  
  l_program_short_name  VARCHAR2 (200);
@@ -31,50 +38,44 @@ BEGIN
      and language = 'ESA'
      and user_concurrent_program_name = v_concurrent_name
     ;
-
-
   
+    DBMS_OUTPUT.Put_Line ('v_conc_id = '||v_conc_id);
   
-  
---select rg.application_id, rg.request_group_id, rga.application_short_name, rga.application_id
---from fnd_responsibility_vl  rsp
---   , fnd_request_groups     rg
---   , fnd_application        rga
---where 1=1
--- and rsp.request_group_id  = rg.request_group_id
--- and rg.application_id     = rga.application_id
--- --and responsibility_name LIKE 'GPDA_PAGOS_%'
--- and rsp.responsibility_id  in  (50273, 50274)
---;
-  
-  
+  FOR r IN l_request_group.FIRST .. l_request_group.LAST LOOP
     
-  --
-  --Calling API to assign concurrent program to a reqest group
-  --
-   apps.fnd_program.ADD_TO_GROUP (program_short_name  => l_program_short_name,
-                                  program_application => l_program_application,
-                                  request_group       => l_request_group,
-                                  group_application   => l_group_application                            
-                                 );  
+        select app.application_short_name
+        into l_group_application
+        from fnd_request_groups  rg
+            ,fnd_application     app
+        where rg.application_id = app.application_id
+          and request_group_name = l_request_group (r)
+        ;
+        
+        --
+        --Calling API to assign concurrent program to a reqest group
+        --
+        apps.fnd_program.ADD_TO_GROUP (
+                                    program_short_name  => l_program_short_name,
+                                    program_application => l_program_application,
+                                    request_group       => l_request_group (r),
+                                    group_application   => l_group_application                            
+                                     );  
+  
+  END LOOP;
+  
   --
   COMMIT;
   --
-
-    BEGIN  
-        select 1
-        into l_check
-        from fnd_request_group_units frgu
-        where 1=1
-         and application_id = v_app_id --200=SQLAP
-         and request_unit_id = v_conc_id
-        ;
-        DBMS_OUTPUT.put_line ('Todo Chido-One!');    
-    EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            DBMS_OUTPUT.put_line ('No se asignó el concurrente');
-    END;
-  
-  
-  
 END;
+/
+
+---
+--Validación
+--
+    select rg.request_group_name
+    from  fnd_request_groups      rg
+         ,fnd_request_group_units rgu
+    where 1=1
+      and rg.request_group_id = rgu.request_group_id
+     and request_unit_id = 462384
+    ;

@@ -1,4 +1,4 @@
-select p.user_concurrent_program_name,
+select 
          g.request_group_name,
          rt.responsibility_name responsibility
          ,r.end_date            resp_end_date
@@ -24,7 +24,7 @@ select p.user_concurrent_program_name,
      and a.language = 'ESA'
      and a1.language = 'ESA'
      --and rt.responsibility_name like 'GRP_HER_PROVEEDORES'
-     and p.user_concurrent_program_name LIKE 'GRP AP WS Crear Pagos de Retornos %NAFIN'
+     and p.user_concurrent_program_name LIKE 'XXCMX WMS OE Confirma RMA (MS UP)'
    order by 1;
 
   
