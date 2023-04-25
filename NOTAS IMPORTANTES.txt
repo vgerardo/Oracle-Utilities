@@ -1,31 +1,10 @@
 
-error:
-FRM-92095: Versión de Oracle JInitiator demasiado baja. Instale la versión 1.1.8.2 o superior
-solucion:
-Agregar a JAVA este parametro 
-	-Djava.vendor="Sun Microsystems Inc." 
-
-===============================
-Config OC4J para usar Java en lugar del JInitiator
-===============================
-Modifying the file formsweb.cfg.
-Lines:
-	baseHTMLjinitiator=basejini.htm 
-	to
-	baseHTMLjinitiator=basejpi.htm
-
-and
-	
-	jpi_mimetype=application/x-java-applet;jpi-version=1.4.2_06
-	to
-	jpi_mimetype=application/x-java-applet
-
 =============================
 PERFILES DE SISTEMA
 =============================
 
-Concurrent: Show Requests Summary After Each Request
-Concurrente: Mostrar Resumen de Solicitudes Después de Cada Ejecución de Solicitud
+Concurrent: Show Requests Summary After Each Request Submission = YES (para que no pregunte)
+
 
 Concurrente: Prioridad de Solicitudes
 
@@ -109,30 +88,6 @@ Sample setting to debug everything:
 	FND: Debug Log Level 	STATEMENT 
 	FND: Debug Log Module 	%
 
-
-
-=======================================================================
-SQLDEVELOPER - Para usar Monitor de Sesiones
-=======================================================================
-
-GRANT SELECT ON apps.gv$session TO bolinf;
-GRANT SELECT_CATALOG_ROLE TO BOLINF;
-GRANT EXECUTE_CATALOG_ROLE TO BOLINF;
-
-select * from USER_ROLE_PRIVS;
-
-
-FALTAN:
-
-GRANT SELECT ON gv$active_session_history TO bolinf;
-GRANT SELECT ON gv$sql_plan TO bolinf;
-GRANT SELECT ON V$MYSTAT to bolinf;
-GRANT SELECT ON sys.V_$SQLCOMMAND to <USER>
-GRANT SELECT ON sys.GV_$SESSION to <USER>
-
-OR obtain read catalog privilege:
-
-grant SELECT ANY DICTIONARY to BOLINF;
 
 
 
