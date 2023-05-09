@@ -76,13 +76,13 @@
         and pro.CONCURRENT_QUEUE_ID  = queue.CONCURRENT_QUEUE_ID (+)
         --AND NVL (rs.language, 'ESA') = 'ESA'
         AND cr.ORACLE_SESSION_ID     = vs.audsid(+)
-        and cr.requested_by          > 0
+        --and cr.requested_by          > 0
         AND cr.requested_by          = usr.user_id(+)
 
-        AND cr.actual_start_date BETWEEN TO_DATE ('2020-03-12 00:00:01', 'YYYY-MM-DD HH24:MI:SS') 
-                                     AND TO_DATE ('2020-05-26 23:53:59', 'YYYY-MM-DD HH24:MI:SS')    
+        AND cr.actual_start_date BETWEEN TO_DATE ('2021-01-01 00:00:01', 'YYYY-MM-DD HH24:MI:SS') 
+                                     AND TO_DATE ('2023-05-29 23:53:59', 'YYYY-MM-DD HH24:MI:SS')    
         
-        AND pr.user_concurrent_program_name LIKE 'GRP OU Envía Mails Finiquitos'
+        AND pr.user_concurrent_program_name LIKE 'XXCMX WSH - Análisis de Embarque Surtido y Facturado'
                  
         --and argument_text like '%80%'
         --
