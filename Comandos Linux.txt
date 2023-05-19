@@ -1,5 +1,6 @@
 
 # Cambiar Formato WINDOWS -> LINUX
+#
 sed -e 's/.$//' dos.txt > linux.txt
 dos2unix archivo.txt
 
