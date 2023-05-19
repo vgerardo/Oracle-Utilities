@@ -80,27 +80,19 @@
         AND cr.requested_by          = usr.user_id(+)
 
         AND cr.actual_start_date BETWEEN TO_DATE ('2021-01-01 00:00:01', 'YYYY-MM-DD HH24:MI:SS') 
-                                     AND TO_DATE ('2023-05-29 23:53:59', 'YYYY-MM-DD HH24:MI:SS')    
+                                     AND TO_DATE ('2023-12-29 23:53:59', 'YYYY-MM-DD HH24:MI:SS')    
         
-        AND pr.user_concurrent_program_name LIKE 'XXCMX WSH - Análisis de Embarque Surtido y Facturado'
+        AND pr.user_concurrent_program_name LIKE 'XXCMX - INV Devolucion e Interorg por Particion'
                  
         --and argument_text like '%80%'
-        --
-        --and cr.phase_code <> 'C'  -- R=Running
-        --and cr.status_code <> 'D' --D=Cancelled
-        --and cr.priority < 50
-        --AND usr.user_name IN ('CORP-AGODINEZ')
         --and cr.request_id = 54792537
-        --and cr.description like  'SET - GRP GL EF Procesar Formulación Corp%'
---and  TO_CHAR (cr.actual_start_date, 'YYYY.MM.DD hh24:mi:ss') = '2019.07.02 12:26:18'
-        ORDER BY
+
+    ORDER BY
           7 desc, 4 desc
           --,cr.actual_start_date DESC
           --.cr.actual_completion_date DESC    
 --   )
---WHERE "Ejecucion (min)" > 10
-    ;
+--WHERE completion_date > 60
+--ORDER BY 2
+;
 
-select *
-from fnd_responsibility_tl
-where responsibility_id  =54296;
