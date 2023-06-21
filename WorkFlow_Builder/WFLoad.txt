@@ -1,0 +1,22 @@
+
+
+======================
+SUBIR UN ARCHIVO
+======================
+WFLOAD <apps/pwd>@<connect_string> 0 Y {UPLOAD | UPGRADE | FORCE} <filepath>[<file_name.wft>]
+
+Ejemplo: 
+WFLOAD apps/orHuHyYk6o@grpdb211-vip.dibos02.di-cloud.com:1526/GRPEBSD 0 Y FORCE XX_AR_AutoFac_Timbrado_Notifica.wft
+
+
+======================
+BAJAR UN ARCHIVO
+======================
+WFLOAD <apps/pwd>@<connect_string> 0 Y DOWNLOAD <file_name.wft> <Item_Type>
+
+Ejemplo: WFLOAD apps/appspwd@TEST 0 Y DOWNLOAD XXWF_APPV.wft XXWF_APPV
+
+
+plsqlclob:XX_AR_WF_APRUEBA_DOCTOS_PKG.create_body_reject/&CUSTOMER_TRX_ID:&ITEM_KEY
+plsqlclob:bolinf.GRP_AR_AUTOFAC_TMBRDO_WF.Listar_Facturas/&LOTE_ID:&USER_ID
+

@@ -1,0 +1,45 @@
+
+========================================
+DEPLOY A OAF APPLICATION
+========================================
+1. ZIP el directorio de las Clases del Proyecto (compiladas)
+   cd "<JDEV_HOME>\jdevhome\jdev\myclasses"
+   zip -r MyFirstOaf.zip conectum/oracle/apps/xbol/MyFistOaf
+
+2. Transferir el ZIP al Servidor de Oracle (ssh)
+
+3. UNZIP usando la opcion "-o" para que sobre-escrita lo que ya exista, y "-d" para cree los directorios.
+   unzip -o MyFirstOaf.zip -d $JAVA_TOP
+
+4. Ejecutar el XMLImporter, para registrar las paginas en el repositorio MDS
+
+#
+# definir variables
+#
+xHOST=172.25.143.8
+xSID=GRPEBST2
+xPORT=1525
+xPSWD=vhw6L5hadb
+xDIR="${JAVA_TOP}/conectum/oracle/apps/xbol/myFistOaf/webui"
+
+#
+# cadena de parametros, esto NO modificarlo.
+#
+xDBC="(description=(address_list=(address=(protocol=tcp)(host=${xHOST})(port=${xPORT})))(connect_data=(sid=${xSID})))"
+xPRM="-rootdir ${JAVA_TOP} -username apps -password ${xPSWD} -dbconnection ${xDBC}"
+
+#
+#realizar esto por cada página del proyecto.
+#
+java oracle.jrad.tools.xml.importer.XMLImporter ${xDIR}/MyFirstPG.xml ${xPRM}
+
+#
+# Eliminar mis variables de entorno
+#
+unset xHOST
+unset xSID
+unset xPORT
+unset xPSWD
+unset xDIR
+unset xDBC
+unset xPRM

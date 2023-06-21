@@ -1,0 +1,10 @@
+Thumbs.db
+*.exe
+*.obj
+*.bak
+*.cache
+*.dll
+*.lib
+**/log
+**/.bkp
+**/.bk

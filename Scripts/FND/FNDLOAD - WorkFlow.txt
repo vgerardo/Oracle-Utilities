@@ -1,0 +1,25 @@
+
+CARGAR Y/O DESCARGAR UN WORKFLOW EN ORACLE
+===========================================
+
+WFLOAD <apps/pwd>@<connect_string> 0 Y {UPLOAD | UPGRADE | FORCE} <filepath>[<file_name.wft>]
+
+ Ejemplo: WFLOAD apps/orHuHyYk6o@grpdb01.dibos02.di-cloud.com:1526/GRPEBSD 0 Y UPLOAD XXGVP01.wft
+
+
+Los archivos de flujos se encuetran en esta carpeta:
+
+ $<PRODUCT_TOP>/patch/115/import/<LANG>. 
+Ejemplo: $PO_TOP/patch/115/import/US
+
+SELECT * FROM WF_EVENT
+
+
+AQUI VOY EN LOS CURSOS
+
+file:///C:/Users/gvargas/OneDrive/Documents/R12.x%20Implement%20Oracle%20Worlflow/D58320GC10_sg1.pdf
+pagina 301 - Directory Serivice
+
+file:///C:/Users/gvargas/OneDrive/Documents/R12.x%20Implement%20Oracle%20Worlflow/D58320GC10_ag.pdf
+pagina 96- Practice Implementing Deferred Processing
+

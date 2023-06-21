@@ -1,0 +1,11 @@
+https://aortizsblog.wordpress.com/2016/05/19/resolviendo-bug-adf-12c-trinidad-glassfish-4-1-trindiad-impl-jar/
+https://www.spazioit.com/pages_en/sol_inf_en/oracle_adf_en/file_download_upload_en/
+
+	En cada DEPLOY, se debe "Disable" el portal, y después sustituir: trinidad-impl.jar (lo bajé de la 2da liga)
+	cp $HOME/trinidad-impl.jar /glassfish-4.1.2/glassfish/domains/conectum/applications/SPPE/SPPE_VC_war/WEB-INF/lib
+
+Ó
+
+se puede sustituir en esta dirección:
+
+	“<Oracle_Home>/oracle_common/modules/oracle.adf.view”

@@ -1,0 +1,243 @@
+======================
+REFERENCIAS
+======================
+https://medium.com/@fsdowie/adf-essentials-installation-january-2016-862cb4c9f4fb
+
+
+======================
+MYSQL (5.7)
+======================
+* Descomprimir el server: mysql-5.6.40-winx64.zip
+* Crear o modificar el archivo <mysql_home>/my.ini	
+	[mysqld]
+	basedir=C:\\Oracle\\mysql-5.6.40-winx64	
+	#sino existe, crear el directorio "data"
+	datadir=C:\\Oracle\\mysql-5.6.40-winx64\\data
+	port=3306
+	default-storage-engine=INNODB
+	default-time-zone = "-06:00"
+	
+        sql_mode=PIPES_AS_CONCAT
+        NOTA: si esto no es posible, se tendría que cambiar el método: "buildQuery" extendiendo "ViewObjectImpl"
+  	      http://thejavaessentials.blogspot.com/2017/12/oracle-adf-essentials-oracle-adf-with.html	
+
+	[client]
+	port=3306
+
+	[mysql]
+	default-character-set=latin1
+
+* Inicializar tablas internas de Mysql (dejando root sin password):  
+	mysqld --initialize-insecure --console
+	sudo /etc/init.d/mysql start o stop
+
+* Iniciar servidor mysql usando:	
+  	mysqld.exe --console
+
+* Cargar la BD de ejemplo: sakila_db
+	Ejecutar la siguiente sentencia dentro de mysql:
+	SOURCE D:/[ruta]/sakila-data.sql;
+  Nota: la ruta no debe ser muy larga, y se debe usar el signo / para separar los directorios.
+
+======================
+GLASSFISH ( 3.1.2.2 y 4.1.2 )
+======================
+Después de instalar glassfish, se deben realizar las siguientes tareas:
+
+0. Indicar la version de JDK que usará:
+	archivo: <glassfish>\glassfish\config\asenv.bat
+	agregar:
+		set AS_JAVA=C:\Java\jdk_8_152	-- para glassfish 4x
+		set AS_JAVA=C:\Java\jdk_7_80	-- para glassfish 3x
+
+1. Iniciar el Servidor.
+	ejecutar: <glassfish>\bin\asadmin
+	comandos:
+		delete-domain domain1
+		create-domain mydomain
+		start-domain mydomain
+                asadmin --host localhost --port 4848 enable-secure-admin
+                or
+		asadmin enable-secure-admin
+	Ingresar:
+		http://localhost:4848/
+
+2. Modificar estas opciones en GlassFish:
+	ruta:  Configurations -> server-config -> JVM Settings -> JVM Options
+	Options:
+	    -Doracle.mds.cache=simple				Agregar
+	    -XX:MaxPermSize=512m				Sólo java 7
+	    -XX:MaxPermSize=192m				Sólo java 8 - Quitar
+	    -XX:MetaspaceSize=512m				Solo Java 8 - Agregar
+	    -XX:MaxMetaspaceSize=512m				Solo Java 8 - Agregar
+
+   	Opcionales (solo en caso que se requieran):
+	    -Djava.rmi.server.hostname=NombreServidor		Agregar
+	    -Dcom.sun.management.jmxremote=true			Agregar
+	    -Dcom.sun.management.jmxremote.port=8686		Agregar
+	    -Dcom.sun.management.jmxremote.ssl=false		Agregar
+	    -Doracle.jdbc.J2EE13Compliant=true			Agregar
+	    -Dcom.sun.management.jmxremote.authenticate=false	Agregar
+
+3. Configurar complementos para MYSQL.
+
+	A) Descomprimir mysql-connector-java-5.1.46.zip  (J/Conector)	
+	   Copiar el "mysql-connector-java-5.1.46.jar" de J/Conector al <glassfish>/.../<dominio>/lib 
+
+	   ** Reiniciar GlassFish (stop y start). **
+
+	B) Agregar Datasource (la version 4.1.1 tiene un bug y no deja crear el datasource):
+
+		Resources -> JDBC -> JDBC Connection Pools -> New 
+			Pool Name: 	MySQL_Sakila
+			Resource Type:	javax.sql.DataSource
+                        Classname:      com.mysql.jdbc.jdbc2.optional.MysqlDataSource (version 5)
+       					com.mysql.cj.jdbc.MysqlDataSource  (version 8)
+			Driver Vendor:  MySql
+			(next) Propiedades Adicionales:
+				DatabaseName:		sakila
+				password:		acapulco
+				Port Number:		3306
+				serverTimezone		UTC
+ 				useSSL 			false  	(evita error: Cannot open file: /config/keystore.jks)
+                                relaxAutoCommit 	true 	(evitar error: "can't call commit when autocommit=true)
+                                noAccessToProcedureBodies = true
+				serverName:		localhost
+				user:			root
+                                URL:            	jdbc:mysql://localhost:3306/sakila
+                                Url:            	jdbc:mysql://localhost:3306/sakila
+				
+		Resources -> JDBC -> JDBC Resources -> New
+			JNDI Name: jdbc/MySQL_Sakila
+			Pool Name: MySQL_Sakila
+
+
+
+4. OPCIONAL - Eliminar los certificados por defecto de Glassfish (s1as y glassfish-instance). 
+	
+	http://www.acelopez.com/oracle-adf/desplegar-aplicaciones-adf-essentials-glassfish-remoto/
+
+	cd /glassfish-4.1.2/glassfish/domains/conectum/config/
+
+	NOTA: Clave por defecto del almacén de llaves es “changeit”:
+
+	keytool -list -keystore keystore.jks
+	keytool -list -keystore cacerts.jks
+
+	keytool -delete -alias s1as               -keystore keystore.jks -storepass changeit 
+	keytool -delete -alias s1as 		  -keystore cacerts.jks -storepass changeit
+	keytool -delete -alias glassfish-instance -keystore keystore.jks -storepass changeit
+	keytool -delete -alias glassfish-instance -keystore cacerts.jks -storepass changeit
+
+*** CREAMOS propios certificados:
+
+keytool -genkey -keysize 2048 -alias s1as -keyalg RSA \
+-dname "CN=conectum.desarrollo,OU=Posadas,O=Conectum,L=Morelia,ST=Michoacan,C=MX" \
+-validity 3650 -storepass changeit -keystore keystore.jks
+
+keytool -genkey -keysize 2048 -alias glassfish-instance -keyalg RSA \
+-dname "CN=conectum.desarrollo,OU=Posadas,O=Conectum,L=Morelia,ST=Michoacan,C=MX" \
+-validity 3650 -storepass changeit -keystore keystore.jks
+
+*** Una vez creados, debemos EXPORTALOS para luego importarlos en el otro almacén:
+
+	keytool -export -alias s1as               -file /tmp/s1as.cert   -keystore keystore.jks -storepass changeit
+	keytool -export -alias glassfish-instance -file /tmp/dev_gf.cert -keystore keystore.jks -storepass changeit
+
+*** Los IMPORTAMOS al otro almacén (cacerts.jks):
+
+	keytool -import -trustcacerts -alias s1as               -file /tmp/s1as.cert   -keystore cacerts.jks -storepass changeit
+	keytool -import -trustcacerts -alias glassfish-instance -file /tmp/dev_gf.cert -keystore cacerts.jks -storepass changeit
+
+*** Y por último, reconfiguramos Glassfish para que use los nuevos certificados:
+
+	/glassfish-4.1.2/bin/asadmin start-domain conectum
+	/glassfish-4.1.2/bin/asadmin enable-secure-admin --instancealias=glassfish-instance --adminalias=s1as 
+
+3. En JDeveloper, debemos importar el certificado s1as.cert
+
+	keytool -import -alias glassfish-remoto -file s1as.cert -keystore C:\Java\jre8_x32\lib\security\cacerts -storepass changeit
+
+	asadmin create-jvm-options '-Djava.rmi.server.hostname=conectum.desarrollo'
+	asadmin create-jvm-options '-Djava.rmi.server.hostname=172.21.27.62'
+	asadmin create-jvm-options '-Dcom.sun.management.jmxremote=true'
+	asadmin create-jvm-options '-Dcom.sun.management.jmxremote.port=8686'
+	asadmin create-jvm-options '-Dcom.sun.management.jmxremote.ssl=false'
+	asadmin create-jvm-options '-Dcom.sun.management.jmxremote.authenticate=false'
+
+======================
+ADF Essential
+======================
+* Instalar la misma versión que sea el JDeveloper:
+	JDev 12.1.3.0  ->  ADF 12.1.3.0
+	JDev 12.2.1.2  ->  ADF 12.2.1.2
+ 
+* Descomprimir el archivo (unzip -j) en la carpeta "lib" del dominio
+  Muy Importante: NO se deben incluir directorios, por eso se usa la opcion -j
+        unzip -j adf-essentials.zip -d adf_jars
+        ó
+        7z e adf-essentials.zip
+  despues:
+	copiar arhcivos a <glassfish home>\glassfish\domains\mydomain\lib
+
+* Reiniciar el glassfish (stop->start)
+
+
+======================
+JDeveloper 12.2.1.2 (whit ADF)    
+======================
+JDK 1.8 update 51+
+Oracle DB 11x +
+MySQL 5.6+
+GlassFish 4.1.2 (instalar librerias ADF Essential 12.2.1.2) 
+WLS	12.2.1
+
+======================
+JDeveloper 12.1.3.0 (whit ADF)  
+======================
+JDK 1.7 update 51+
+Oracle DB 11x +
+MySQL 5.6+
+GlassFish 3.1.2	(instalar librerias ADF Essential 12.1.3)
+WLS 12.1.3  ( defaultDomain  weblogic/acapulco# )
+
+
+======================
+Configurar PROYECTO para GLASSFISH
+======================
+
+* En Application -> Default Project Properties -> Run/Debug -> <Edit>
+	En "Java Options" agregar -Djbo.debugoutput=console
+
+* Crear Variable de Ambiente JDEV_USER_DIR Será el lugar donde se guarden los Proyectos creados por Jdeveloper.
+
+* Agregar libreria de MySQL.
+  Rutra:  Tools -> Manage Libraries -> New
+  buscar mysql-connector-java-5.1.46-bin.jar en los directorios y selecionarlo. -> OK.
+
+* Crear una conexión al servidor GlassFish, Pestaña: Applications Servers -> (click derecho y New Server)
+
+* Crear una conexión al servidor MySQL (usando controlador que se añadio en el paso anterior): Databases -> IDE Connections
+    Si es necesario, agregar JDBC parametro: serverTimezone = UTC
+
+* Cambiar la plataforma a "Glassfish" 
+    Menu Application -> Application Properties -> Deployment -> Edit Profile -> Platform
+    Select ViewController -> Project Properties -> Deployment -> Edit Profile -> Platform   
+    Select Model -> Project Properties -> Connections -> Selecionar "Connection Name Only"
+
+* Agregar una BD al proyecto, despues:
+    Select Model ->  Aplication Sources -> .. -> AppModule -> Abrir archivo "AppModule.xml"
+    Ir a la opcion de Configurations, y abrir el archivo "bc4j.xml"
+    Buscar la cadena "java:comp/env/jdbc/MySQL_Sakila", y cambiar el dato como "jdbc/MySQL_Sakila"
+
+* Cambiar el nombre del contexto a algo más "Amigable"
+  Select ViewControler Project -> Project Properties -> Java EE Application
+  cambiar "Java EE Web Context Root" a un nombre más amigable, ej. "myFirstADF"
+  Esto para que el URL sea algo como: http://localhost:8080/myFirstADF/faces/<Pagina>
+
+IMPORTANTE:
+	ADF Essentials, no tiene los siguientes modulos: ADF Security, ADF Web Services.
+	por lo tanto, estos no deben existir en el proyecto.
+
+mañana entrevista
+-- 5pm mañana

@@ -1,0 +1,27 @@
+==================
+ERROR EN GLASSFISH
+==================
+Este error ocurre, cuando configuré SHIRO en la aplicación. 
+Jdeveloper: 12.2.1.3.0
+GlassFish: 4.1.2
+
+*** Could not initialize class oracle.adf.share.security.identitymanagement.UserProfile
+https://jcflack.blogspot.com/2017/03/a-work-around-for-security-in-adf.html
+
+Solución:
+	1. Obtener los archivos adf-share-ca.jar y adf-share-base.jar
+           Se pueden copiar del server, o usar 7-zip para extraerlos del zip. 
+           Deben corresponder a la misma version de ADF Essential
+	2. Bajé el programa "JD Decompiler" (jd-gui-windows-1.4.0.zip) para decompilar la clase java.
+	3. Buscar la clase: oracle.adf.share.security.identitymanagement.UserProfile
+	4. convertí la clase ".class" a fuente ".java".            
+	5. Modifique el fuente ".java", comentado todo el contenido del metodo "UserProfile(String userName)".
+        6. Con el jdk 8, recompilar la clase
+	   javac -classpath adf-share-ca.jar;adf-share-base.jar UserProfile.java -Xlint:deprecation -Xlint:unchecked
+        7. Guardar el UserProfile.class en la misma estructura de directorios: "oracle\adf\share\security\identitymanagement\"
+	8. actualicé el nuevo archivo en el JAR.	
+           jar uf adf-share-ca.jar oracle\adf\share\security\identitymanagement\UserProfile.class
+	9. ahora hay que sustituir el archivo JAR, en la carpeta de GlassFish
+	   cp $HOME/adf-share-ca.jar /glassfish-4.1.2/glassfish/domains/conectum/lib
+	10. y reiniciar GlassFish
+

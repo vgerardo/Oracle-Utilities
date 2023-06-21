@@ -1,0 +1,109 @@
+
+
+--Cuando se instala por 1ra vez GIT en la máquina
+--Se debe Configurar al menos estos Datos Iniciales
+--
+git config --global user.name "Gerardo Vargas (ppg)"
+git config --global user.email "gvargas@ppg.com"
+git config --global init.defaultBranch "main"
+git config --global pull.rebase "false"
+git config --global http.sslbackend schannel   (corrige: unable to get local issuer certificate)
+git config -l
+
+
+--Para crear un Repositorio Local (con los archivos ya existentes)
+$git init
+
+
+--Clonar Repositorio Remoto, en un directorio local.
+--Nota: el directorio local debe estar vacio. por default, clona todas las ramas
+$git clone <url repository> <local directory>
+
+
+-- clona únicamente la rama indicada
+-- esto está chido-one, porque cada "user" puede trabajar en su Rama 
+git clone --branch myRama --single-branch [url repository] [local directory]
+
+
+--
+--Crear una Rama Huerfana
+git checkout --orphan <orphan_name>
+git rm -rf .
+
+
+--
+-- Cuando es el 1er Push de una Rama, se debe configurar los datos Remotos
+--
+$git branch --set-upstream-to=origin/<rama remota> <rama local>
+$git pull --set-upstream myRepo myRama
+
+
+-- En caso que la Rama remota y Local se llamen igual,
+-- entonces se podría usar esta configuración
+$git config --global --add --bool push.autoSetupRemote true    
+
+
+--Registra un Repo Remoto
+--
+$git remote add azure https://PPG-MX@dev.azure.com/PPG-MX/MyProjects/_git/PRUEBA
+$git push -u azure --all
+
+
+--
+--Operaciones "day-to-day work" en un Repositorio
+--
+$git status					--Muestra el estado de los archivos 
+$git add <archivo(s)>				--Envia los archivos "Modificados" al area STAGE
+$git commit --all				--Guarda cambios en repo local
+$git revert HEAD				--Deshace el último commit
+$git push <remote name>				--Envia los cambios al Repositorio Remoto
+$git pull <rama>				--Recupera cambios del Repositorio Remoto
+$git log --oneline				--ver historial de "Commits"
+
+--Borra una rama (local y romota)
+--
+$git branch -d rama-pedro	--rama local
+$git push origin -d rama-pedro	--rama remota
+
+
+--
+--Restaurar Commits aún no PUSHED.
+--
+--Your latest commit will now be undone. 
+--Your changes remain in place, and the files go back to being staged 
+--(e.g. with git add) so you can make any additional changes or add any missing files. 
+--You can then make a new commit.
+git reset --soft HEAD~3  --ultimos 3 commits
+
+--
+--Restaurar Commits ya PUSHED
+--
+$git revert 2f5451f --no-edit
+
+
+-- **********************
+--PELIGROSO PELIGROSO
+--Esto restaura el repositorio al su estado inicial... 
+--Borra y Descarta TODOS los commits posteriores al ID indicado
+-- **********************
+$git reset --hard 2f5451f
+
+
+--Borrado Todo el Historial de Commits, dejando solo la última versión
+--
+git checkout --orphan huerfana
+git add -A
+git commit -m "Inicio: 2023-05-24"
+git branch -D main
+git branch -m main
+git push -f <remote name> main
+git gc --aggressive --prune=all
+
+--Para actualizar en otras PC (falta probarlo)
+git fetch
+git chekcout huerfana
+git branch -D main
+git branch -m main
+git push -f <otro remote> main
+
+git diff "remoto/rama" "rama local"

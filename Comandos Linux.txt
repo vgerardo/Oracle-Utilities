@@ -1,0 +1,44 @@
+
+# Cambiar Formato WINDOWS -> LINUX
+sed -e 's/.$//' dos.txt > linux.txt
+dos2unix archivo.txt
+
+# para buscar un archivo
+find / -iname webutil.pll -type f -print
+
+# para buscar una cadena dentro de un archivo
+find / -type f -print -exec grep jacob.jar {} \;
+
+
+# Dejar corriendo un Comando en Linux, y salir de la sesion SSH
+ssh [server]	-- conectarse al server ssh
+command		-- ejecutar comando linux
+CTRL+Z		-- oprimir las teclas, para pausar el comando
+bg		-- re-iniciar el comando en modo background
+jobs -l		-- lista los jobs que se están ejecutando
+disown		-- Para poder salir sin que termine el Job ó
+disown -h jobID	-- si el de arriba no funciona, intentar este.
+exit		-- salir de la sesion
+
+# O también se podría usar
+nohup <comando> &
+
+Posteriormente, para encontrar el proceso, se puede usar:
+$ps aux | grep <comando>
+
+ejemplo: $ nohup sh custom-script.sh &
+
+
+#grep -rli --exclude-dir={dir1,dir2,dir3} keyword /path/to/search
+
+Ejemplo:
+grep -rli --exclude-dir={\
+/grp/ebsd/app/fs2/FMW_Home/user_projects/domains/,\
+/etc/oraInventory/logs\
+} \
+ebs3rdpartyManifest.jar /
+
+================================
+ABRIR PUERTOS
+================================
+iptables -A INPUT -p tcp -d 0/0 -s 0/0 --dport 5805 -j ACCEPT
