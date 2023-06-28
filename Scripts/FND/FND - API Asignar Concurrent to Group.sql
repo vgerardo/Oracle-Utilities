@@ -4,26 +4,17 @@ DECLARE
 TYPE type_req_groups IS VARRAY (100)   OF VARCHAR2(80);
 
 l_request_group       type_req_groups	:= type_req_groups (
- 'XXCMX - INV Operador Interface'
-,'XXCMX - INV Op Interface CA PA'
-,'XXCMX - INV Op Interface CA BZ'
-,'XXCMX - INV Op Interface CA SV'
-,'XXCMX - INV Op Interface CA NI'
-,'XXCMX - INV Op Interface CA CR'
-,'XXCMX - INV Op Interface CA GT'
-,'XXCMX - INV Op Interface CA HN'
+ 'XXCMX - INV Planta Master User'
 ); 
 
- v_concurrent_name     varchar2(100) 	:= 'XXCMX WMS OE Confirma RMA (MS UP)';
+ v_concurrent_name     varchar2(100) 	:= 'XXCMX WMS Enviar GME Orden Produccion WIP (MS DW)';
  
- l_group_application   VARCHAR2 (50);
- v_app_id              number(15)		:= 200;
- 
- l_program_short_name  VARCHAR2 (200);
- l_program_application VARCHAR2 (200); 
- l_check               VARCHAR2 (2);
+ l_group_application   VARCHAR2(50);
+ --v_app_id              number(15)		:= 200;
+ l_program_short_name  VARCHAR2(200);
+ l_program_application VARCHAR2(200); 
+ l_check               VARCHAR2(2);
  v_conc_id             number(15);
-
   --
 BEGIN
   
@@ -77,5 +68,5 @@ END;
          ,fnd_request_group_units rgu
     where 1=1
       and rg.request_group_id = rgu.request_group_id
-     and request_unit_id = 462384
+     and request_unit_id = 478394
     ;
