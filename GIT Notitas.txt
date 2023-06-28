@@ -89,6 +89,7 @@ $git revert 2f5451f --no-edit
 $git reset --hard 2f5451f
 
 
+--
 --Borrado Todo el Historial de Commits, dejando solo la última versión
 --
 git checkout --orphan huerfana
@@ -99,11 +100,6 @@ git branch -m main
 git push -f <remote name> main
 git gc --aggressive --prune=all
 
---Para actualizar en otras PC (falta probarlo)
-git fetch
-git chekcout huerfana
-git branch -D main
-git branch -m main
-git push -f <otro remote> main
+
 
 git diff "remoto/rama" "rama local"
